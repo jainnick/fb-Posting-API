@@ -18,7 +18,7 @@ Before you begin using the API, ensure you have the following prerequisites:
 
 1. Clone the Repository:
    Clone the repository to your local machine using the command:
-   git clone <repository_url>
+   git clone <https://github.com/jainnick/fb-Posting-API.git>
   
 2. Install Dependencies:
    Navigate to the project directory and install the required dependencies:
