@@ -1,0 +1,102 @@
+# fb-Posting-API
+## API Documentation: Posting Photos and Messages to Facebook Page
+
+### Introduction
+
+Welcome to the documentation for our API that allows you to post photos and messages to a Facebook Page using the Facebook Graph API. This guide will walk you through the necessary steps to set up your environment, obtain access tokens, and interact with the API.
+
+### Prerequisites
+
+Before you begin using the API, ensure you have the following prerequisites:
+
+- A Facebook Developer account
+- Familiarity with managing Facebook Pages
+- Node.js and npm installed
+- Basic knowledge of API concepts
+
+### Getting Started
+
+1. Clone the Repository:
+   Clone the repository to your local machine using the command:
+   git clone <repository_url>
+  
+2. Install Dependencies:
+   Navigate to the project directory and install the required dependencies:
+   cd <project_directory>
+   npm install
+
+3. Create .env File:
+   Create a `.env` file in the project directory and add your credentials:
+   
+   PAGE_ACCESS_TOKEN=your-access-token
+   PAGE_ID=your-page-id
+   
+
+### Endpoints
+
+#### `POST /post-to-facebook`
+
+Uploads a photo and message to a Facebook Page.
+
+- Request:
+  - Method: POST
+  - URL: `http://localhost:3000/post-to-facebook`
+  - Headers:
+    - `Content-Type: application/json`
+  - Body:
+    json
+    {
+      "message": "Your message here",
+      "photoPath": "path/to/your/photo.jpg"
+    }
+    
+- Response:
+  - Status: 200 OK
+  - Body:
+    json
+    {
+      "post_id": "your-post-id"
+    }
+    
+### Example Requests
+
+#### Uploading Photo from URL:
+
+json
+{
+  "message": "Check out this photo!",
+  "photoUrl": "https://example.com/photo.jpg"
+}
+
+#### Uploading Local Photo:
+
+json
+{
+  "message": "My own photo!",
+  "photoPath": "path/to/local/photo.jpg"
+}
+
+### Error Handling
+
+- If the photo is not found or the URL is invalid, you'll receive a `400 Bad Request` response.
+- If there's an issue with the API request, you'll receive an appropriate error response.
+
+### Security Considerations
+
+- Store your access tokens and sensitive data securely.
+- Avoid sharing access tokens publicly.
+- Use server-side storage for sensitive information.
+
+### Rate Limiting
+
+There are no specific rate limits for this API, but be mindful of Facebook's rate limits and API usage policies.
+
+### Troubleshooting
+
+- If you encounter errors, check the error response for more information.
+- Verify your access tokens and credentials.
+
+### Versioning
+
+This documentation corresponds to API version 1.0. Future versions may introduce changes; refer to updated documentation for changes.
+
