@@ -36,7 +36,7 @@ Before you begin using the API, ensure you have the following prerequisites:
 
 #### `POST /post-to-facebook`
 
-Uploads a photo and message to a Facebook Page.
+Uploads a PHOTO, VIDEO, GIF and message to a Facebook Page.
 
 - Request:
   - Method: POST
@@ -46,9 +46,11 @@ Uploads a photo and message to a Facebook Page.
   - Body:
     json
     {
-      "message": "Your message here",
-      "photoPath": "path/to/your/photo.jpg"
-    }
+  "message": "Your message content here",
+  "mediaType": "photo",
+  "mediaPath": "path/to/your/photo.jpg",
+  "mediaUrl": "URL_to_your_photo"
+}
     
 - Response:
   - Status: 200 OK
@@ -60,20 +62,22 @@ Uploads a photo and message to a Facebook Page.
     
 ### Example Requests
 
-#### Uploading Photo from URL:
+#### Uploading a media file from URL:
 
 json
 {
-  "message": "Check out this photo!",
-  "photoUrl": "https://example.com/photo.jpg"
+  "message": "Check out this video!",
+  "mediaType":"video",
+  "mediaUrl": "https://example.com/video.mp4"
 }
 
-#### Uploading Local Photo:
+#### Uploading Local Media file:
 
 json
 {
-  "message": "My own photo!",
-  "photoPath": "path/to/local/photo.jpg"
+  "message": "My own gif!",
+  "mediaType":"gif",
+  "mediaPath": "path/to/local/gifhy.gif"
 }
 
 ### Error Handling
