@@ -13,51 +13,73 @@ app.use(express.json());
 const pageAccessToken = process.env.PAGE_ACCESS_TOKEN;
 const pageId = process.env.PAGE_ID;
 
+// Endpoint for posting to Facebook
 app.post('/post-to-facebook', async (req, res) => {
   try {
+    // Get message and media type from request body
     const message = req.body.message;
-    const photoPath = req.body.photoPath;
-    const photoUrl = req.body.photoUrl;
+    const mediaType = req.body.mediaType; // 'photo', 'video', 'gif', 'message'
 
-    let apiUrl, formData;
+    if (mediaType === 'photo' || mediaType === 'video' || mediaType === 'gif') {
+      // Get media path and URL from request body
+      const mediaPath = req.body.mediaPath;
+      const mediaUrl = req.body.mediaUrl;
 
-    if (photoPath || photoUrl) {
-      // Handle photo upload
-      apiUrl = `https://graph.facebook.com/v12.0/${pageId}/photos`;
-
-      if (photoPath) {
-        const photoFullPath = path.join(__dirname, photoPath);
-        if (!fs.existsSync(photoFullPath)) {
-          return res.status(400).json({ error: 'Photo not found' });
-        }
-        formData = new FormData();
-        formData.append('access_token', pageAccessToken);
-        formData.append('message', message);
-        formData.append('source', fs.createReadStream(photoFullPath));
-      } else if (photoUrl) {
-        const response = await axios.get(photoUrl, { responseType: 'stream' });
-        formData = new FormData();
-        formData.append('access_token', pageAccessToken);
-        formData.append('message', message);
-        formData.append('source', response.data);
+      if (!mediaPath && !mediaUrl) {
+        return res.status(400).json({ error: 'Media source not provided' });
       }
-    } else {
-      // Handle message only
-      apiUrl = `https://graph.facebook.com/v12.0/${pageId}/feed`;
-      formData = {
+
+      // Determine the appropriate media source based on media type
+      let mediaSource;
+      if (mediaPath) {
+        const fullPath = path.join(__dirname, mediaPath);
+        if (!fs.existsSync(fullPath)) {
+          return res.status(400).json({ error: 'Media not found' });
+        }
+        mediaSource = fs.createReadStream(fullPath);
+      } else if (mediaUrl) {
+        const response = await axios.get(mediaUrl, { responseType: 'stream' });
+        mediaSource = response.data;
+      }
+
+      // Determine the appropriate API URL based on media type
+      const apiUrl = mediaType === 'photo'
+        ? `https://graph.facebook.com/v12.0/${pageId}/photos`
+        : `https://graph-video.facebook.com/v12.0/${pageId}/videos`;
+
+      // Create form data and append necessary fields
+      const formData = new FormData();
+      formData.append('access_token', pageAccessToken);
+      formData.append('message', message);
+      formData.append('source', mediaSource);
+
+      // Make the API request to post the media
+      const response = await axios.post(apiUrl, formData, {
+        headers: {
+          ...formData.getHeaders(),
+        },
+      });
+
+      res.json({ post_id: response.data.id });
+
+    } else if (mediaType === 'message') {
+      // If media type is 'message', post only the message content
+      const apiUrl = `https://graph.facebook.com/v12.0/${pageId}/feed`;
+
+      const postData = {
         message: message,
         access_token: pageAccessToken,
       };
+
+      const response = await axios.post(apiUrl, postData);
+
+      res.json({ post_id: response.data.id });
+
+    } else {
+      return res.status(400).json({ error: 'Invalid media type' });
     }
-
-    const response = await axios.post(apiUrl, formData, {
-      headers: formData instanceof FormData ? formData.getHeaders() : {},
-    });
-
-    res.json({ post_id: response.data.id });
   } catch (error) {
     console.error('Error:', error);
-
     if (error.response) {
       res.status(error.response.status).json({ error: error.response.data });
     } else {
