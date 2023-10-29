@@ -1,5 +1,5 @@
 # fb-Posting-API
-## API Documentation: Posting Photos and Messages to Facebook Page
+## API Documentation: Posting Photos, Videos and Messages to Facebook Page
 
 ### Introduction
 
